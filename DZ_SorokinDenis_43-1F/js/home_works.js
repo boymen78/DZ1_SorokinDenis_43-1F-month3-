@@ -98,3 +98,54 @@ function resetTimer() {
 startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
+
+document.addEventListener("DOMContentLoaded", function() {
+    const xhrCharacters = new XMLHttpRequest();
+    xhrCharacters.open("GET", "../data/characters.json", true);
+    xhrCharacters.onreadystatechange = function() {
+        if (xhrCharacters.readyState === 4 && xhrCharacters.status === 200) {
+            const characters = JSON.parse(xhrCharacters.responseText);
+            displayCharacters(characters);
+        }
+    };
+    xhrCharacters.send();
+
+    function displayCharacters(characters) {
+        const charactersList = document.querySelector(".characters-list");
+        characters.forEach(character => {
+            const card = document.createElement("div");
+            card.classList.add("character-card");
+
+            const photo = document.createElement("div");
+            photo.classList.add("character-photo");
+            const img = document.createElement("img");
+            img.src = character.person_photo;
+            img.alt = character.name;
+            photo.appendChild(img);
+
+            const name = document.createElement("h3");
+            name.textContent = character.name;
+
+            const description = document.createElement("p");
+            description.textContent = character.description;
+
+            card.appendChild(photo);
+            card.appendChild(name);
+            card.appendChild(description);
+
+            charactersList.appendChild(card);
+        });
+    }
+});
+
+function anyInfo() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "../data/any.json");
+    xhr.send();
+
+    xhr.onload = function () {
+        const any = JSON.parse(xhr.response);
+        console.log(any);
+    };
+}
+anyInfo();
