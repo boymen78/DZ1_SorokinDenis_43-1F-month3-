@@ -99,20 +99,28 @@ startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
 
-document.addEventListener("DOMContentLoaded", function() {
-    const xhrCharacters = new XMLHttpRequest();
-    xhrCharacters.open("GET", "../data/characters.json", true);
-    xhrCharacters.onreadystatechange = function() {
-        if (xhrCharacters.readyState === 4 && xhrCharacters.status === 200) {
-            const characters = JSON.parse(xhrCharacters.responseText);
-            displayCharacters(characters);
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        const response = await fetch("../data/characters.json", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    };
-    xhrCharacters.send();
+
+        const characters = await response.json();
+        displayCharacters(characters);
+    } catch (error) {
+        console.error("Error fetching characters:", error);
+    }
 
     function displayCharacters(characters) {
         const charactersList = document.querySelector(".characters-list");
-        characters.forEach(character => {
+
+        characters.forEach((character) => {
             const card = document.createElement("div");
             card.classList.add("character-card");
 
@@ -138,14 +146,24 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-function anyInfo() {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "../data/any.json");
-    xhr.send();
 
-    xhr.onload = function () {
-        const any = JSON.parse(xhr.response);
+async function anyInfo() {
+    try {
+        const response = await fetch("../data/any.json", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const any = await response.json();
         console.log(any);
-    };
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
+
 anyInfo();
